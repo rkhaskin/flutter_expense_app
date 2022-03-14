@@ -50,10 +50,10 @@ class _NewTransactionState extends State<NewTransaction> {
               margin: const EdgeInsetsDirectional.only(top: 10, bottom: 10),
               child: TextButton(
                 onPressed: submitData,
-                child: const Text(
+                child: Text(
                   'Add Transaction',
                   style: TextStyle(
-                    color: Colors.purple,
+                    color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
