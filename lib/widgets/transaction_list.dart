@@ -4,7 +4,10 @@ import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactionList;
-  const TransactionList(this.transactionList, {Key? key}) : super(key: key);
+  final Function deleteTransaction;
+  const TransactionList(this.transactionList, this.deleteTransaction,
+      {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,43 +25,30 @@ class TransactionList extends StatelessWidget {
           : ListView.builder(
               itemBuilder: (ctx, index) {
                 return Card(
-                    child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                        color: Theme.of(context).primaryColor,
-                        width: 2,
-                      )),
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
-                      child: Text(
-                          '\$${transactionList[index].amount.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Theme.of(context).primaryColor,
-                          )),
+                  elevation: 5,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: FittedBox(
+                            child: Text('\$${transactionList[index].amount}')),
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          transactionList[index].title,
-                          // pull style from global theme headline6
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                        Text(
-                            DateFormat.yMMMMd()
-                                .format(transactionList[index].date),
-                            style: const TextStyle(
-                              color: Colors.grey,
-                            )),
-                      ],
-                    )
-                  ],
-                ));
+                    title: Text(transactionList[index].title,
+                        style: Theme.of(ctx).textTheme.headline6),
+                    subtitle: Text(
+                        DateFormat.yMMMd().format(transactionList[index].date)),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      color: Theme.of(context).errorColor,
+                      onPressed: () =>
+                          deleteTransaction(transactionList[index].id),
+                    ),
+                  ),
+                );
               },
               itemCount: transactionList.length,
             ),

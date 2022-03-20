@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import './widgets/new_transaction.dart';
 import './widgets/chart.dart';
@@ -17,18 +19,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final List<Transaction> _userTransactions = [
-    Transaction(
-      id: 't1',
-      title: 'New Book',
-      amount: 35.99,
-      date: DateTime.now().subtract(const Duration(days: 3)),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Bread',
-      amount: 16.99,
-      date: DateTime.now(),
-    )
+    // Transaction(
+    //   id: 't1',
+    //   title: 'New Book',
+    //   amount: 35.99,
+    //   date: DateTime.now().subtract(const Duration(days: 3)),
+    // ),
+    // Transaction(
+    //   id: 't2',
+    //   title: 'Bread',
+    //   amount: 16.99,
+    //   date: DateTime.now(),
+    // )
   ];
 
   List<Transaction> get _recentTransactions {
@@ -38,15 +40,21 @@ class _MyAppState extends State<MyApp> {
     }).toList();
   }
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount, DateTime selectedDate) {
     final newTx = Transaction(
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: selectedDate,
       id: DateTime.now().toString(),
     );
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
     });
   }
 
@@ -76,6 +84,9 @@ class _MyAppState extends State<MyApp> {
             fontSize: 25,
             fontWeight: FontWeight.bold,
             color: Colors.red,
+          ),
+          button: TextStyle(
+            color: Colors.white,
           ),
         ),
         appBarTheme: AppBarTheme(
@@ -108,7 +119,7 @@ class _MyAppState extends State<MyApp> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_recentTransactions),
-            TransactionList(_userTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
           ],
         ),
         floatingActionButton: Builder(builder: (context) {

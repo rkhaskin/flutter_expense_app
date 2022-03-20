@@ -14,7 +14,11 @@ class ChartBar extends StatelessWidget {
     print('$label $spendingAmount $spendingPctOfTotal');
     return Column(
       children: [
-        FittedBox(child: Text('\$${spendingAmount.toStringAsFixed(2)}')),
+        Container(
+          height: 20,
+          child:
+              FittedBox(child: Text('\$${spendingAmount.toStringAsFixed(2)}')),
+        ),
         const SizedBox(
           height: 4,
         ),
