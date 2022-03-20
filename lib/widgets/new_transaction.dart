@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTransaction;
@@ -10,17 +11,32 @@ class NewTransaction extends StatefulWidget {
 
 class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
-
   final amountController = TextEditingController();
+  DateTime? _selectedDate;
+
+  void _presentDatePicker() {
+    // stateful class has global property
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2022),
+            lastDate: DateTime.now())
+        .then((selectedDate) {
+      if (selectedDate == null) return;
+      setState(() {
+        _selectedDate = selectedDate;
+      });
+    });
+  }
 
   void submitData() {
     final enteredTitle = titleController.text;
     final enteredAmount = double.parse(amountController.text);
 
-    if (enteredTitle.isEmpty || enteredAmount < 0) {
+    if (enteredTitle.isEmpty || enteredAmount < 0 || _selectedDate == null) {
       return;
     }
-    widget.addTransaction(enteredTitle, enteredAmount);
+    widget.addTransaction(enteredTitle, enteredAmount, _selectedDate);
 
     // close top-most modal;
     Navigator.of(context).pop();
@@ -47,23 +63,46 @@ class _NewTransactionState extends State<NewTransaction> {
               onSubmitted: (_) => submitData(),
             ),
             Container(
-              margin: const EdgeInsetsDirectional.only(top: 10, bottom: 10),
-              child: TextButton(
-                onPressed: submitData,
-                child: Text(
-                  'Add Transaction',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
+              height: 70,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? 'No date chosen'
+                          : DateFormat.yMd().format(_selectedDate!),
+                    ),
                   ),
-                ),
-                // style: ButtonStyle(
-
-                //   foregroundColor:
-                //       MaterialStateProperty.all<Color>(Colors.purple),
-                // ),
+                  TextButton(
+                    onPressed: _presentDatePicker,
+                    child: const Text('Choose Date',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        )),
+                    style: TextButton.styleFrom(
+                      primary: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ],
               ),
-            )
+            ),
+            Container(
+              margin: const EdgeInsetsDirectional.only(top: 10, bottom: 10),
+              child: ElevatedButton(
+                  onPressed: submitData,
+                  child: const Text('Add Transaction'),
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(
+                      color: Theme.of(context).textTheme.button?.color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
+              // style: ButtonStyle(
+
+              //   foregroundColor:
+              //       MaterialStateProperty.all<Color>(Colors.purple),
+              // ),
+            ),
           ],
         ),
       ),
